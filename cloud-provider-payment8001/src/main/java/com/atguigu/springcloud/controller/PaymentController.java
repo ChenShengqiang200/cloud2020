@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -22,7 +23,7 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @Value("${server.port}")
-    private String port;
+    private String serverPort;
 
     @Resource
     private DiscoveryClient discoveryClient;
@@ -35,7 +36,7 @@ public class PaymentController {
         log.info("*****插入结果: " + result);
 
         if (result > 0) {
-            return new CommonResult<>(200, "插入数据库成功" + port, null);
+            return new CommonResult<>(200, "插入数据库成功" + serverPort, null);
         }
         return new CommonResult<>(444, "插入数据库失败" , null);
     }
@@ -46,7 +47,7 @@ public class PaymentController {
         log.info("*****插入结果: " + payment);
 
         if (payment != null) {
-            return new CommonResult<Payment>(200, "查询成功" + port, payment);
+            return new CommonResult<Payment>(200, "查询成功" + serverPort, payment);
         }
         return new CommonResult<Payment>(444, "查询失败" , null);
     }
@@ -66,6 +67,28 @@ public class PaymentController {
         }
 
         return this.discoveryClient;
+    }
+
+    @GetMapping(value = "/lb")
+    public String getPaymentLB() {
+        return serverPort;
+    }
+
+    @GetMapping(value = "/feign/timeout")
+    public String paymentFeignTimeout() {
+        try {
+            // 暂停3秒钟
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return serverPort;
+    }
+
+
+    @GetMapping(value = "/zipkin")
+    public String paymentZipkin() {
+        return "hi,i'am paymentZipkin server fall back,welcome to atguigu,O(∩_∩)O哈哈~";
     }
 
 }

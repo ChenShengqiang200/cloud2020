@@ -2,7 +2,9 @@ server:
   port: 7001
 eureka:
   instance:
+    # 单机版
     hostname: localhost
+    # 集群版
 #    hostname: eureka7001.com
     # Eureka客户端向服务端发送心跳的时间间隔,单位为秒(默认是30秒)
     lease-renewal-interval-in-seconds: 1

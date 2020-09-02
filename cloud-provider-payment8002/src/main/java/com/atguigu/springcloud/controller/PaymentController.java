@@ -18,7 +18,7 @@ public class PaymentController {
     @Resource
     private PaymentService paymentService;
     @Value("${server.port}")
-    private String port;
+    private String serverPort;
 
     // http://localhost:8001/payment/create?serial=alllttae直接插入
     // 如果是order80调用，传payment需要加@RequestBody!
@@ -28,9 +28,9 @@ public class PaymentController {
         log.info("*****插入结果: " + result);
 
         if (result > 0) {
-            return new CommonResult<>(200, "插入数据库成功" + port, null);
+            return new CommonResult<>(200, "插入数据库成功" + serverPort, null);
         }
-        return new CommonResult<>(444, "插入数据库失败" + port, null);
+        return new CommonResult<>(444, "插入数据库失败" + serverPort, null);
     }
 
     @GetMapping("/get/{id}")
@@ -39,9 +39,14 @@ public class PaymentController {
         log.info("*****插入结果: " + payment);
 
         if (payment != null) {
-            return new CommonResult<Payment>(200, "查询成功" + port, payment);
+            return new CommonResult<Payment>(200, "查询成功" + serverPort, payment);
         }
-        return new CommonResult<Payment>(444, "查询失败" + port, null);
+        return new CommonResult<Payment>(444, "查询失败" + serverPort, null);
+    }
+
+    @GetMapping(value = "/lb")
+    public String getPaymentLB() {
+        return serverPort;
     }
 
 }
